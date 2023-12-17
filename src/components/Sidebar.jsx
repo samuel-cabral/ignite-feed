@@ -18,7 +18,7 @@ export function Sidebar() {
           alt=""
         />
         <strong>Samuel Cabral</strong>
-        <span>Frontend Developer</span>
+        <span>Front-End Developer</span>
       </div>
 
       <footer>
