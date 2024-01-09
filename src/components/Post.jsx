@@ -6,13 +6,6 @@ import { Comment } from './Comment'
 import styles from './Post.module.css'
 import { useState } from 'react'
 
-const commentsData = [
-  {
-    id: 1,
-    content: 'Muito bom esse post! Obrigado por compartilhar!',
-  },
-]
-
 export function Post({ author, publishedAt, content }) {
   const publishedDateFormatted = format(
     publishedAt,
@@ -27,7 +20,7 @@ export function Post({ author, publishedAt, content }) {
     addSuffix: true,
   })
 
-  const [comments, setComments] = useState(commentsData)
+  const [comments, setComments] = useState([{ id: 1, content: 'teste' }])
   const [newCommentText, setNewCommentText] = useState('')
 
   function handleCreateNewComment(event) {
@@ -45,8 +38,22 @@ export function Post({ author, publishedAt, content }) {
   }
 
   function handleNewCommentTextChange(event) {
+    event.target.setCustomValidity('')
     setNewCommentText(event.target.value)
   }
+
+  function handleNewCommentInvalid(event) {
+    event.target.setCustomValidity('O comentário não pode estar vazio')
+  }
+
+  function deleteComment(commentId) {
+    const commentsWithoutDeletedOne = [
+      ...comments.filter((comment) => comment.id !== commentId),
+    ]
+    setComments(commentsWithoutDeletedOne)
+  }
+
+  const isNewCommentTextEmpty = newCommentText.trim() === ''
 
   return (
     <article className={styles.post}>
@@ -96,15 +103,23 @@ export function Post({ author, publishedAt, content }) {
           placeholder="Deixe um comentário"
           value={newCommentText}
           onChange={handleNewCommentTextChange}
+          onInvalid={handleNewCommentInvalid}
+          required
         />
         <footer>
-          <button type="submit">Publicar</button>
+          <button type="submit" disabled={isNewCommentTextEmpty}>
+            Publicar
+          </button>
         </footer>
       </form>
 
       <div className={styles.commentList}>
         {comments.map((comment) => (
-          <Comment key={comment.id} content={comment.content} />
+          <Comment
+            key={comment.id}
+            comment={comment}
+            deleteComment={deleteComment}
+          />
         ))}
       </div>
     </article>
