@@ -6,6 +6,20 @@ import styles from './App.module.css'
 
 import './global.css'
 
+interface Post {
+  id: number
+  author: {
+    avatarUrl: string
+    name: string
+    role: string
+  }
+  content: {
+    type: 'paragraph' | 'link'
+    text: string
+  }[]
+  publishedAt: Date
+}
+
 const posts = [
   {
     id: 1,
@@ -47,7 +61,7 @@ const posts = [
     ],
     publishedAt: new Date('2023-12-10 19:20:30'),
   },
-]
+] satisfies Post[]
 
 export function App() {
   return (
@@ -58,7 +72,12 @@ export function App() {
         <Sidebar />
         <main>
           {posts.map((post) => (
-            <Post key={post.id} {...post} />
+            <Post
+              key={post.id}
+              author={post.author}
+              content={post.content}
+              publishedAt={post.publishedAt}
+            />
           ))}
         </main>
       </div>

@@ -1,12 +1,29 @@
+import { useState, FormEvent, ChangeEvent, InvalidEvent } from 'react'
 import { format, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 import { Avatar } from './Avatar'
 import { Comment } from './Comment'
 import styles from './Post.module.css'
-import { useState } from 'react'
 
-export function Post({ author, publishedAt, content }) {
+interface PostAuthor {
+  avatarUrl: string
+  name: string
+  role: string
+}
+
+interface PostContent {
+  type: 'paragraph' | 'link'
+  text: string
+}
+
+interface PostProps {
+  author: PostAuthor
+  publishedAt: Date
+  content: PostContent[]
+}
+
+export function Post({ author, publishedAt, content }: PostProps) {
   const publishedDateFormatted = format(
     publishedAt,
     "d 'de' LLLL 'às' HH:mm'h'",
@@ -23,10 +40,10 @@ export function Post({ author, publishedAt, content }) {
   const [comments, setComments] = useState([{ id: 1, content: 'teste' }])
   const [newCommentText, setNewCommentText] = useState('')
 
-  function handleCreateNewComment(event) {
+  function handleCreateNewComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const commentContent = event.target.elements[0].value
+    const commentContent = event.currentTarget.comment.value
 
     const newComment = {
       id: Date.now(),
@@ -37,16 +54,16 @@ export function Post({ author, publishedAt, content }) {
     setNewCommentText('')
   }
 
-  function handleNewCommentTextChange(event) {
+  function handleNewCommentTextChange(event: ChangeEvent<HTMLTextAreaElement>) {
     event.target.setCustomValidity('')
     setNewCommentText(event.target.value)
   }
 
-  function handleNewCommentInvalid(event) {
+  function handleNewCommentInvalid(event: InvalidEvent<HTMLTextAreaElement>) {
     event.target.setCustomValidity('O comentário não pode estar vazio')
   }
 
-  function deleteComment(commentId) {
+  function deleteComment(commentId: number) {
     const commentsWithoutDeletedOne = [
       ...comments.filter((comment) => comment.id !== commentId),
     ]
@@ -118,7 +135,7 @@ export function Post({ author, publishedAt, content }) {
           <Comment
             key={comment.id}
             comment={comment}
-            deleteComment={deleteComment}
+            onDeleteComment={deleteComment}
           />
         ))}
       </div>

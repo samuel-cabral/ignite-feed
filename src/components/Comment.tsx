@@ -4,11 +4,19 @@ import { ThumbsUp } from '@phosphor-icons/react/dist/ssr'
 import { Avatar } from './Avatar'
 import { useState } from 'react'
 
-export function Comment({ comment, deleteComment }) {
+interface CommentProps {
+  comment: {
+    id: number
+    content: string
+  }
+  onDeleteComment: (commentId: number) => void
+}
+
+export function Comment({ comment, onDeleteComment }: CommentProps) {
   const [likeCount, setLikeCount] = useState(0)
 
   function handleDeleteComment() {
-    deleteComment(comment.id)
+    onDeleteComment(comment.id)
   }
 
   function handleLikeComment() {
